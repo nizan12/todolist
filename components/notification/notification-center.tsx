@@ -1,31 +1,32 @@
-import { useNotifications } from "../../hooks/use-notifications";
-import { CheckCheck, Trash2, Bell } from "lucide-react";
+import { useNotifications } from "@/hooks/use-notifications";
+import { CheckCheck, Bell } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 
 export function NotificationCenter({ onClose }: { onClose: () => void }) {
   const { notifications, markAsRead, markAllAsRead } = useNotifications();
 
   return (
-    <div className="absolute right-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-xl border border-[var(--color-border)] py-2 overflow-hidden z-50 animate-in fade-in slide-in-from-top-2">
-      <div className="px-4 py-3 border-b border-[var(--color-border)] flex items-center justify-between">
-        <h3 className="font-bold text-[var(--color-primary)] flex items-center gap-2">
-          <Bell size={18} /> Notifications
+    <div className="w-80 sm:w-[360px] clean-panel overflow-hidden">
+      <div className="px-4 py-3 border-b border-[var(--color-border)] flex items-center justify-between bg-[#FAFAFA]">
+        <h3 className="text-[13px] font-semibold text-[var(--color-primary)]">
+          Notifications
         </h3>
         {notifications.length > 0 && (
           <button 
             onClick={markAllAsRead}
-            className="text-xs font-medium text-blue-600 hover:text-blue-800 transition-colors flex items-center gap-1"
+            className="text-[11px] font-medium text-[#0070F3] hover:text-black transition-colors flex items-center gap-1"
           >
-            <CheckCheck size={14} /> Mark all read
+            <CheckCheck size={12} /> Mark all read
           </button>
         )}
       </div>
 
-      <div className="max-h-[60vh] overflow-y-auto">
+      <div className="max-h-[360px] overflow-y-auto">
         {notifications.length === 0 ? (
-          <div className="py-12 text-center text-[var(--color-muted)] text-sm">
-            <Bell size={32} className="mx-auto mb-3 opacity-20" />
-            No notifications yet
+          <div className="py-10 text-center flex flex-col items-center">
+            <Bell size={24} className="mb-2 text-gray-300" strokeWidth={1.5} />
+            <p className="text-[13px] font-medium text-[var(--color-primary)]">You're all caught up</p>
+            <p className="text-[11px] text-[var(--color-muted)] mt-0.5">No new notifications</p>
           </div>
         ) : (
           <div className="flex flex-col">
@@ -34,36 +35,42 @@ export function NotificationCenter({ onClose }: { onClose: () => void }) {
                 key={notif.id} 
                 onClick={() => {
                   if (!notif.read) markAsRead(notif.id);
-                  // Open todo logically if we had a query param handler
-                  // window.location.href = `/dashboard?todo=${notif.todoId}`;
                 }}
-                className={`p-4 border-b border-gray-50 cursor-pointer hover:bg-gray-50 transition-colors ${notif.read ? 'opacity-60' : 'bg-blue-50/30'}`}
+                className={`p-4 border-b border-[var(--color-border)] cursor-pointer hover:bg-[#FAFAFA] transition-colors relative ${notif.read ? 'opacity-70' : 'bg-white'}`}
               >
+                {!notif.read && (
+                  <div className="absolute left-0 top-0 bottom-0 w-0.5 bg-[#0070F3]"></div>
+                )}
                 <div className="flex items-start justify-between gap-3">
-                  <div>
-                    <h4 className={`text-sm font-semibold mb-1 ${
-                      notif.type === 'overdue' ? 'text-[var(--color-danger)]' : 
-                      notif.type === 'deadline' ? 'text-[var(--color-warning)]' : 
-                      'text-blue-600'
+                  <div className="pl-1">
+                    <h4 className={`text-[13px] font-medium mb-1 ${
+                      notif.type === 'overdue' ? 'text-[#DC2626]' : 
+                      notif.type === 'deadline' ? 'text-[#D97706]' : 
+                      'text-[var(--color-primary)]'
                     }`}>
                       {notif.title}
                     </h4>
-                    <p className="text-sm text-[var(--color-primary)] leading-tight mb-2">
+                    <p className="text-[12px] text-[var(--color-muted)] leading-relaxed mb-1.5">
                       {notif.message}
                     </p>
-                    <p className="text-[10px] text-[var(--color-muted)] font-medium">
+                    <p className="text-[10px] text-gray-400 font-medium">
                       {notif.createdAt ? formatDistanceToNow(notif.createdAt.toDate(), { addSuffix: true }) : 'just now'}
                     </p>
                   </div>
-                  {!notif.read && (
-                    <div className="w-2.5 h-2.5 rounded-full bg-blue-600 flex-shrink-0 mt-1"></div>
-                  )}
                 </div>
               </div>
             ))}
           </div>
         )}
       </div>
+      
+      {notifications.length > 0 && (
+        <div className="p-2 border-t border-[var(--color-border)] bg-[#FAFAFA] text-center">
+          <button onClick={onClose} className="text-[11px] font-medium text-[var(--color-muted)] hover:text-black transition-colors py-1 px-3">
+            Close
+          </button>
+        </div>
+      )}
     </div>
   );
 }

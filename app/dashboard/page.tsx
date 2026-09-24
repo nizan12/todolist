@@ -18,7 +18,7 @@ export default function DashboardPage() {
   const [sortBy, setSortBy] = useState("Newest");
 
   return (
-    <div className="flex flex-col gap-8 max-w-6xl mx-auto">
+    <div className="flex flex-col gap-8 max-w-[1400px] w-full px-4 sm:px-6 lg:px-8 mx-auto">
       <header>
         <h1 className="text-2xl font-semibold text-[var(--color-primary)]">
           Dashboard
@@ -28,8 +28,8 @@ export default function DashboardPage() {
 
       <TodoStatistics todos={todos} />
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 flex flex-col gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        <div className="lg:col-span-3 flex flex-col gap-6">
           <TodoForm />
           
           <div className="clean-panel p-4 sm:p-6 rounded-md">

@@ -1,50 +1,48 @@
 import { Filter } from "lucide-react";
+import { CustomSelect } from "@/components/ui/custom-select";
 
 export function TodoFilter({ filterStatus, setFilterStatus, filterPriority, setFilterPriority, sortBy, setSortBy }: any) {
   return (
-    <div className="flex flex-col sm:flex-row gap-4 items-center justify-between pb-4 border-b border-[var(--color-border)]">
-      <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto pb-2 sm:pb-0 hide-scrollbar">
-        <Filter size={16} className="text-[var(--color-muted)] mr-1" />
+    <div className="flex flex-col lg:flex-row gap-3 items-start lg:items-center justify-between pb-3 border-b border-[var(--color-border)] w-full">
+      <div className="flex items-center gap-1.5 sm:gap-2 w-full lg:w-auto overflow-hidden">
+        <Filter size={14} className="text-[var(--color-muted)] mr-1 hidden sm:block flex-shrink-0" strokeWidth={2} />
         
         {['All', 'Active', 'Completed', 'Overdue'].map((status) => (
           <button
             key={status}
             onClick={() => setFilterStatus(status)}
-            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-colors ${
+            className={`px-2.5 py-1 rounded-md text-[12px] font-medium transition-colors duration-200 flex-shrink-0 ${
               filterStatus === status
                 ? 'bg-[var(--color-primary)] text-white'
-                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                : 'bg-white text-[var(--color-muted)] hover:bg-[#F4F4F5] hover:text-black'
             }`}
           >
             {status}
           </button>
         ))}
 
-        <div className="w-px h-6 bg-gray-200 mx-1 hidden sm:block"></div>
+        <div className="w-px h-4 bg-[#EAEAEA] mx-1 hidden sm:block flex-shrink-0"></div>
 
-        <select
-          value={filterPriority}
-          onChange={(e) => setFilterPriority(e.target.value)}
-          className="bg-gray-100 text-gray-600 px-3 py-1.5 rounded-full text-xs font-medium outline-none cursor-pointer hover:bg-gray-200 transition-colors"
-        >
-          <option>All Priority</option>
-          <option>Low</option>
-          <option>Medium</option>
-          <option>High</option>
-        </select>
+        <div className="w-24 sm:w-28 flex-shrink-0 hidden sm:block">
+          <CustomSelect
+            value={filterPriority}
+            onChange={setFilterPriority}
+            options={['All Priority', 'Low', 'Medium', 'High']}
+            className="bg-white text-[12px] font-medium text-[var(--color-muted)] hover:bg-[#F4F4F5] hover:text-black px-2 py-1 rounded-md w-full"
+          />
+        </div>
       </div>
 
-      <div className="w-full sm:w-auto">
-        <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value)}
-          className="w-full sm:w-auto border border-gray-200 text-[var(--color-primary)] px-4 py-2 rounded-xl text-sm font-medium outline-none cursor-pointer hover:bg-gray-50 transition-colors focus:border-[var(--color-primary)]"
-        >
-          <option>Newest</option>
-          <option>Oldest</option>
-          <option>Due Date</option>
-          <option>Priority</option>
-        </select>
+      <div className="flex items-center gap-2 lg:flex-shrink-0 ml-auto lg:ml-0 mt-2 lg:mt-0">
+        <span className="text-[12px] font-medium text-[var(--color-muted)] hidden sm:block">Sort by:</span>
+        <div className="w-24 sm:w-28 flex-shrink-0">
+          <CustomSelect
+            value={sortBy}
+            onChange={setSortBy}
+            options={['Newest', 'Oldest', 'Due Date', 'Priority']}
+            className="bg-white border border-[var(--color-border)] text-[12px] font-medium px-2 py-1 rounded-md hover:bg-[#FAFAFA] w-full"
+          />
+        </div>
       </div>
     </div>
   );

@@ -27,10 +27,10 @@ export function TodoItem({ todo }: { todo: Todo }) {
 
   return (
     <>
-      <div className={`clean-panel p-4 rounded-md transition-opacity ${
-        todo.completed ? "opacity-60 bg-gray-50" : ""
+      <div className={`group bg-white border border-[var(--color-border)] rounded-lg p-4 transition-all duration-200 hover:shadow-sm hover:border-[#D4D4D8] ${
+        todo.completed ? "opacity-50 bg-[#FAFAFA]" : ""
       }`}>
-        <div className="flex items-start gap-4">
+        <div className="flex items-start gap-3.5">
           <div className="pt-0.5">
             <input 
               type="checkbox"
@@ -41,40 +41,42 @@ export function TodoItem({ todo }: { todo: Todo }) {
           </div>
 
           <div className="flex-grow min-w-0">
-            <div className="flex items-center gap-3 mb-1">
-              <h3 className={`font-medium text-sm ${
-                todo.completed ? "text-gray-500 line-through" : "text-[var(--color-primary)]"
+            <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+              <h3 className={`font-semibold text-[15px] ${
+                todo.completed ? "text-gray-400 line-through" : "text-[var(--color-primary)]"
               }`}>
                 {todo.title}
               </h3>
-              <span className={`text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded border ${
-                todo.priority === 'high' ? 'border-red-200 text-red-600 bg-red-50' :
-                todo.priority === 'medium' ? 'border-orange-200 text-orange-600 bg-orange-50' :
-                'border-gray-200 text-gray-600 bg-gray-50'
+              
+              <span className={`text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-full border ${
+                todo.priority === 'high' ? 'border-[#FCA5A5] text-[#DC2626] bg-[#FEF2F2]' :
+                todo.priority === 'medium' ? 'border-[#FCD34D] text-[#D97706] bg-[#FFFBEB]' :
+                'border-[#E5E7EB] text-[#6B7280] bg-[#F9FAFB]'
               }`}>
                 {todo.priority}
               </span>
+              
               {isOverdue && !todo.completed && (
-                <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded border border-red-200 text-red-600 bg-red-50">
+                <span className="text-[10px] font-medium uppercase tracking-wider px-2 py-0.5 rounded-full border border-[#FCA5A5] text-[#DC2626] bg-[#FEF2F2]">
                   Overdue
                 </span>
               )}
             </div>
             
             {todo.description && (
-              <p className="text-xs text-[var(--color-muted)] mb-3 line-clamp-2">
+              <p className="text-[13px] text-[var(--color-muted)] mb-3 line-clamp-2 leading-relaxed">
                 {todo.description}
               </p>
             )}
 
-            <div className="flex flex-wrap items-center gap-4 mt-2">
+            <div className="flex flex-wrap items-center gap-3 mt-1.5">
               {todo.dueDate && (
-                <div className="flex items-center gap-1.5 text-[11px] text-[var(--color-muted)]">
-                  <Calendar size={12} />
+                <div className="flex items-center gap-1.5 text-[12px] font-medium text-[var(--color-muted)]">
+                  <Calendar size={13} strokeWidth={2.5} />
                   <span>{formatDate(todo.dueDate.toDate())}</span>
                   {todo.dueTime && (
                     <>
-                      <Clock size={12} className="ml-1" />
+                      <Clock size={13} strokeWidth={2.5} className="ml-0.5" />
                       <span>{todo.dueTime}</span>
                     </>
                   )}
@@ -82,8 +84,8 @@ export function TodoItem({ todo }: { todo: Todo }) {
               )}
               
               {todo.reminder?.enabled && todo.reminder.reminders.length > 0 && (
-                <div className="flex items-center gap-1.5 text-[11px] text-[var(--color-muted)]">
-                  <Bell size={12} />
+                <div className="flex items-center gap-1.5 text-[12px] font-medium text-[#0070F3]">
+                  <Bell size={13} strokeWidth={2.5} />
                   <span>
                     {todo.reminder.reminders[0].minutesBefore === 0 ? "At deadline" : 
                      todo.reminder.reminders[0].minutesBefore < 60 ? `${todo.reminder.reminders[0].minutesBefore}m before` :
@@ -98,10 +100,10 @@ export function TodoItem({ todo }: { todo: Todo }) {
           <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <button 
               onClick={() => setIsEditing(true)}
-              className="p-1.5 text-gray-400 hover:text-[var(--color-primary)] rounded transition-colors" 
+              className="p-1.5 text-[#A1A1AA] hover:text-[var(--color-primary)] hover:bg-[#F4F4F5] rounded-md transition-colors" 
               aria-label="Edit"
             >
-              <Pencil size={14} />
+              <Pencil size={15} strokeWidth={2} />
             </button>
             <button 
               onClick={() => {
@@ -109,10 +111,10 @@ export function TodoItem({ todo }: { todo: Todo }) {
                   remove(todo.id);
                 }
               }}
-              className="p-1.5 text-gray-400 hover:text-[var(--color-danger)] rounded transition-colors" 
+              className="p-1.5 text-[#A1A1AA] hover:text-[#DC2626] hover:bg-[#FEF2F2] rounded-md transition-colors" 
               aria-label="Delete"
             >
-              <Trash2 size={14} />
+              <Trash2 size={15} strokeWidth={2} />
             </button>
           </div>
         </div>

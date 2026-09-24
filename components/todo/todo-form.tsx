@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useTodos } from "@/hooks/use-todos";
 import { Timestamp } from "firebase/firestore";
+import { CustomSelect } from "@/components/ui/custom-select";
 
 export function TodoForm() {
   const { add } = useTodos();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [priority, setPriority] = useState<"low" | "medium" | "high">("medium");
+  const [priority, setPriority] = useState("Medium");
   const [dueDate, setDueDate] = useState("");
   const [dueTime, setDueTime] = useState("");
   const [reminder, setReminder] = useState("No reminder");
@@ -36,7 +37,7 @@ export function TodoForm() {
       await add({
         title,
         description,
-        priority,
+        priority: priority.toLowerCase() as "low" | "medium" | "high",
         completed: false,
         dueDate: dueDate ? Timestamp.fromDate(new Date(dueDate)) : null,
         dueTime: dueTime || null,
@@ -45,7 +46,7 @@ export function TodoForm() {
 
       setTitle("");
       setDescription("");
-      setPriority("medium");
+      setPriority("Medium");
       setDueDate("");
       setDueTime("");
       setReminder("No reminder");
@@ -56,7 +57,7 @@ export function TodoForm() {
   };
 
   return (
-    <div className="clean-panel p-4 rounded-md">
+    <div className="clean-panel p-4 rounded-lg">
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
           <input
@@ -64,83 +65,73 @@ export function TodoForm() {
             placeholder="What needs to be done?"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="flex-grow clean-input p-2.5 text-sm w-full"
+            className="flex-grow clean-input p-2.5 text-[14px] w-full"
             required
           />
           <button
             type="button"
             onClick={() => setIsExpanded(!isExpanded)}
-            className="text-xs text-[var(--color-muted)] hover:text-[var(--color-primary)] transition-colors px-2 py-1 flex-shrink-0"
+            className="text-[12px] font-medium text-[var(--color-muted)] hover:text-black transition-colors px-2 py-1.5 flex-shrink-0 bg-gray-50 hover:bg-gray-100 rounded-md"
           >
             {isExpanded ? "Less options" : "More options"}
           </button>
           <button
             type="submit"
             disabled={!title.trim()}
-            className="bg-[var(--color-primary)] text-white px-4 py-2.5 rounded-md text-sm font-medium hover:bg-black transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 w-full sm:w-auto"
+            className="btn-primary px-4 py-2.5 rounded-md text-[13px] font-medium disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0 w-full sm:w-auto"
           >
             Add Task
           </button>
         </div>
         
         {isExpanded && (
-          <div className="flex flex-col gap-4 border-t border-[var(--color-border)] pt-4 mt-2">
+          <div className="flex flex-col gap-4 pt-2">
             <textarea
               placeholder="Description (optional)"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
-              className="clean-input p-2.5 text-sm min-h-[80px] resize-none"
+              className="clean-input p-2.5 text-[13px] min-h-[80px] resize-none"
             />
             
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-[var(--color-primary)]">Priority</label>
-                <select
+              <div className="flex flex-col gap-1.5 relative">
+                <label className="text-[11px] font-semibold text-[var(--color-muted)] uppercase tracking-wider">Priority</label>
+                <CustomSelect
                   value={priority}
-                  onChange={(e) => setPriority(e.target.value as any)}
-                  className="clean-input p-2 text-sm"
-                >
-                  <option value="low">Low</option>
-                  <option value="medium">Medium</option>
-                  <option value="high">High</option>
-                </select>
+                  onChange={setPriority}
+                  options={['Low', 'Medium', 'High']}
+                  className="clean-input p-2 text-[13px]"
+                />
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-[var(--color-primary)]">Due Date</label>
+                <label className="text-[11px] font-semibold text-[var(--color-muted)] uppercase tracking-wider">Due Date</label>
                 <input
                   type="date"
                   value={dueDate}
                   onChange={(e) => setDueDate(e.target.value)}
-                  className="clean-input p-2 text-sm"
+                  className="clean-input p-2 text-[13px]"
                 />
               </div>
 
               <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-[var(--color-primary)]">Due Time</label>
+                <label className="text-[11px] font-semibold text-[var(--color-muted)] uppercase tracking-wider">Due Time</label>
                 <input
                   type="time"
                   value={dueTime}
                   onChange={(e) => setDueTime(e.target.value)}
-                  className="clean-input p-2 text-sm"
+                  className="clean-input p-2 text-[13px]"
                 />
               </div>
 
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-[var(--color-primary)]">Reminder</label>
-                <select
+              <div className="flex flex-col gap-1.5 relative">
+                <label className="text-[11px] font-semibold text-[var(--color-muted)] uppercase tracking-wider">Reminder</label>
+                <CustomSelect
                   value={reminder}
-                  onChange={(e) => setReminder(e.target.value)}
-                  className="clean-input p-2 text-sm"
-                >
-                  <option>No reminder</option>
-                  <option>At deadline</option>
-                  <option>5 minutes before</option>
-                  <option>15 minutes before</option>
-                  <option>30 minutes before</option>
-                  <option>1 hour before</option>
-                  <option>1 day before</option>
-                </select>
+                  onChange={setReminder}
+                  options={['No reminder', 'At deadline', '5 minutes before', '15 minutes before', '30 minutes before', '1 hour before', '1 day before']}
+                  className="clean-input p-2 text-[13px]"
+                />
               </div>
             </div>
           </div>
