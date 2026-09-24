@@ -1,17 +1,26 @@
 import { NextResponse } from 'next/server';
-import * as admin from 'firebase-admin';
+import { getApps, initializeApp, cert } from 'firebase-admin/app';
+import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import { getMessaging } from 'firebase-admin/messaging';
 
 // Initialize Firebase Admin if not already initialized
-if (!admin.apps.length) {
+if (!getApps().length) {
   try {
-    admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-        // Replace escaped newlines for private key
-        privateKey: process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-      }),
-    });
+    const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID;
+    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
+    const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, '\n');
+    
+    if (projectId && clientEmail && privateKey) {
+      initializeApp({
+        credential: cert({
+          projectId,
+          clientEmail,
+          privateKey,
+        }),
+      });
+    } else {
+      console.warn("Firebase admin environment variables are missing.");
+    }
   } catch (error) {
     console.error('Firebase admin initialization error', error);
   }
@@ -25,8 +34,12 @@ export async function GET(request: Request) {
       return new NextResponse('Unauthorized', { status: 401 });
     }
 
-    const db = admin.firestore();
-    const messaging = admin.messaging();
+    if (!getApps().length) {
+       return new NextResponse('Firebase Admin not initialized', { status: 500 });
+    }
+
+    const db = getFirestore();
+    const messaging = getMessaging();
     const now = new Date();
 
     // In a real production app, we would query cross-collection group or iterate users.
@@ -112,7 +125,7 @@ export async function GET(request: Request) {
               message: message,
               type: type,
               read: false,
-              createdAt: admin.firestore.FieldValue.serverTimestamp(),
+              createdAt: FieldValue.serverTimestamp(),
             });
 
             // Mark as sent
@@ -125,7 +138,7 @@ export async function GET(request: Request) {
         if (needsUpdate) {
           await todoDoc.ref.update({
             'reminder.reminders': updatedReminders,
-            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+            updatedAt: FieldValue.serverTimestamp()
           });
         }
       }
