@@ -1,6 +1,6 @@
-import { Todo } from "../../types/todo";
-import { Check, Trash2, Pencil, Calendar, Bell, Clock } from "lucide-react";
-import { useTodos } from "../../hooks/use-todos";
+import { Todo } from "@/types/todo";
+import { Trash2, Pencil, Calendar, Bell, Clock } from "lucide-react";
+import { useTodos } from "@/hooks/use-todos";
 import { useState } from "react";
 import { TodoEditModal } from "./todo-edit-modal";
 
@@ -21,73 +21,69 @@ export function TodoItem({ todo }: { todo: Todo }) {
     return now > dueDateTime;
   })();
 
-  const priorityColor = {
-    low: "bg-gray-100 text-gray-600",
-    medium: "bg-orange-100 text-orange-700",
-    high: "bg-red-100 text-red-700"
-  }[todo.priority];
-
   const formatDate = (date: Date) => {
     return date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
   };
 
   return (
     <>
-      <div className={`p-5 rounded-2xl border transition-all ${
-        todo.completed 
-          ? "bg-gray-50 border-gray-100 opacity-75" 
-          : isOverdue 
-            ? "bg-white border-red-200 shadow-sm"
-            : "bg-white border-gray-100 shadow-sm hover:shadow-md hover:border-gray-200"
+      <div className={`clean-panel p-4 rounded-md transition-opacity ${
+        todo.completed ? "opacity-60 bg-gray-50" : ""
       }`}>
         <div className="flex items-start gap-4">
-          <button
-            onClick={() => toggle(todo.id, todo.completed)}
-            className={`flex-shrink-0 w-6 h-6 rounded-full border-2 flex items-center justify-center transition-colors mt-1 ${
-              todo.completed 
-                ? "bg-[var(--color-success)] border-[var(--color-success)]" 
-                : "border-gray-300 hover:border-[var(--color-success)]"
-            }`}
-          >
-            {todo.completed && <Check size={14} className="text-white" />}
-          </button>
+          <div className="pt-0.5">
+            <input 
+              type="checkbox"
+              className="minimal-checkbox"
+              checked={todo.completed}
+              onChange={() => toggle(todo.id, todo.completed)}
+            />
+          </div>
 
           <div className="flex-grow min-w-0">
-            <div className="flex items-start justify-between gap-2 mb-1">
-              <h3 className={`font-semibold text-lg truncate ${
-                todo.completed ? "text-gray-400 line-through" : "text-[var(--color-primary)]"
+            <div className="flex items-center gap-3 mb-1">
+              <h3 className={`font-medium text-sm ${
+                todo.completed ? "text-gray-500 line-through" : "text-[var(--color-primary)]"
               }`}>
                 {todo.title}
               </h3>
-              <span className={`flex-shrink-0 text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${priorityColor}`}>
+              <span className={`text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded border ${
+                todo.priority === 'high' ? 'border-red-200 text-red-600 bg-red-50' :
+                todo.priority === 'medium' ? 'border-orange-200 text-orange-600 bg-orange-50' :
+                'border-gray-200 text-gray-600 bg-gray-50'
+              }`}>
                 {todo.priority}
               </span>
+              {isOverdue && !todo.completed && (
+                <span className="text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded border border-red-200 text-red-600 bg-red-50">
+                  Overdue
+                </span>
+              )}
             </div>
             
             {todo.description && (
-              <p className={`text-sm mb-3 line-clamp-2 ${todo.completed ? "text-gray-400" : "text-gray-600"}`}>
+              <p className="text-xs text-[var(--color-muted)] mb-3 line-clamp-2">
                 {todo.description}
               </p>
             )}
 
-            <div className="flex flex-wrap items-center gap-y-2 gap-x-4 mt-3">
+            <div className="flex flex-wrap items-center gap-4 mt-2">
               {todo.dueDate && (
-                <div className={`flex items-center gap-1.5 text-xs font-medium ${isOverdue && !todo.completed ? 'text-[var(--color-danger)]' : 'text-gray-500'}`}>
-                  <Calendar size={14} />
+                <div className="flex items-center gap-1.5 text-[11px] text-[var(--color-muted)]">
+                  <Calendar size={12} />
                   <span>{formatDate(todo.dueDate.toDate())}</span>
                   {todo.dueTime && (
                     <>
-                      <Clock size={14} className="ml-1" />
+                      <Clock size={12} className="ml-1" />
                       <span>{todo.dueTime}</span>
                     </>
                   )}
-                  {isOverdue && !todo.completed && <span className="ml-1 uppercase text-[10px] bg-red-100 px-1.5 py-0.5 rounded font-bold">Overdue</span>}
                 </div>
               )}
               
               {todo.reminder?.enabled && todo.reminder.reminders.length > 0 && (
-                <div className="flex items-center gap-1.5 text-xs font-medium text-blue-600">
-                  <Bell size={14} />
+                <div className="flex items-center gap-1.5 text-[11px] text-[var(--color-muted)]">
+                  <Bell size={12} />
                   <span>
                     {todo.reminder.reminders[0].minutesBefore === 0 ? "At deadline" : 
                      todo.reminder.reminders[0].minutesBefore < 60 ? `${todo.reminder.reminders[0].minutesBefore}m before` :
@@ -99,22 +95,24 @@ export function TodoItem({ todo }: { todo: Todo }) {
             </div>
           </div>
 
-          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 sm:opacity-100 flex-shrink-0">
+          <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
             <button 
               onClick={() => setIsEditing(true)}
-              className="p-2 text-gray-400 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-colors" aria-label="Edit todo"
+              className="p-1.5 text-gray-400 hover:text-[var(--color-primary)] rounded transition-colors" 
+              aria-label="Edit"
             >
-              <Pencil size={18} />
+              <Pencil size={14} />
             </button>
             <button 
               onClick={() => {
-                if (window.confirm("Are you sure you want to delete this task?\nThis action cannot be undone.")) {
+                if (window.confirm("Are you sure you want to delete this task?")) {
                   remove(todo.id);
                 }
               }}
-              className="p-2 text-gray-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-colors" aria-label="Delete todo"
+              className="p-1.5 text-gray-400 hover:text-[var(--color-danger)] rounded transition-colors" 
+              aria-label="Delete"
             >
-              <Trash2 size={18} />
+              <Trash2 size={14} />
             </button>
           </div>
         </div>

@@ -17,20 +17,13 @@ export default function DashboardPage() {
   const [filterPriority, setFilterPriority] = useState("All Priority");
   const [sortBy, setSortBy] = useState("Newest");
 
-  const getGreeting = () => {
-    const hour = new Date().getHours();
-    if (hour < 12) return "Good morning";
-    if (hour < 18) return "Good afternoon";
-    return "Good evening";
-  };
-
   return (
-    <div className="flex flex-col gap-8">
-      <header className="mb-2">
-        <h1 className="text-3xl font-bold text-[var(--color-primary)]">
-          {getGreeting()}, {currentUser?.displayName?.split(' ')[0] || 'User'}
+    <div className="flex flex-col gap-8 max-w-6xl mx-auto">
+      <header>
+        <h1 className="text-2xl font-semibold text-[var(--color-primary)]">
+          Dashboard
         </h1>
-        <p className="text-[var(--color-muted)] mt-1">Manage your tasks and stay productive.</p>
+        <p className="text-[var(--color-muted)] text-sm mt-1">Welcome back, {currentUser?.displayName?.split(' ')[0] || 'User'}.</p>
       </header>
 
       <TodoStatistics todos={todos} />
@@ -39,7 +32,7 @@ export default function DashboardPage() {
         <div className="lg:col-span-2 flex flex-col gap-6">
           <TodoForm />
           
-          <div className="bg-white p-6 rounded-2xl shadow-sm border border-[var(--color-border)]">
+          <div className="clean-panel p-4 sm:p-6 rounded-md">
             <TodoFilter 
               filterStatus={filterStatus} setFilterStatus={setFilterStatus}
               filterPriority={filterPriority} setFilterPriority={setFilterPriority}
@@ -55,7 +48,9 @@ export default function DashboardPage() {
         </div>
         
         <div className="lg:col-span-1">
-          <UpcomingDeadlines todos={todos} />
+          <div className="sticky top-24">
+            <UpcomingDeadlines todos={todos} />
+          </div>
         </div>
       </div>
     </div>
